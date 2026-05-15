@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryVerse — Your Cinematic Memory Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     PARTICLE CANVAS (floating background dots)
+════════════════════════════════════════════════ -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- ═══════════════════════════════════════════════
+     NAV BAR
+════════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-brand">
+    <span class="nav-logo">◈</span>
+    <span class="nav-title">MemoryVerse</span>
+  </div>
+  <div class="nav-links">
+    <a href="#home" class="nav-link">Home</a>
+    <a href="#timeline" class="nav-link">Timeline</a>
+    <a href="#add" class="nav-link">Add Memory</a>
+    <a href="#music" class="nav-link">Music</a>
+  </div>
+  <div class="nav-mood-badge" id="navMoodBadge">
+    <span class="mood-dot"></span>
+    <span id="currentMoodLabel">Detecting mood…</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     HERO / LANDING SECTION
+════════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">✦ Your Story, Crystallized</div>
+    <h1 class="hero-title">
+      Every moment<br>
+      <em>deserves</em> to<br>
+      <span class="hero-title-accent">live forever.</span>
+    </h1>
+    <p class="hero-sub">
+      MemoryVerse is a cinematic journal that captures your memories,
+      reads your mood, and wraps your life in stunning visuals.
+    </p>
+    <div class="hero-cta-row">
+      <a href="#add" class="btn-primary">
+        <span>Add a Memory</span>
+        <span class="btn-icon">→</span>
+      </a>
+      <a href="#timeline" class="btn-ghost">View Timeline</a>
+    </div>
+
+    <!-- Floating stat badges -->
+    <div class="hero-stats">
+      <div class="stat-badge">
+        <span class="stat-num" id="statCount">0</span>
+        <span class="stat-label">Memories</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-num" id="statMood">–</span>
+        <span class="stat-label">Current Mood</span>
+      </div>
+      <div class="stat-badge">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Moments</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-hint">
+    <span>Scroll to explore</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     MOOD BANNER (updates dynamically)
+════════════════════════════════════════════════ -->
+<div class="mood-banner" id="moodBanner">
+  <div class="mood-banner-inner">
+    <span class="mood-emoji" id="moodEmoji">🌙</span>
+    <div>
+      <div class="mood-banner-title">Current Atmosphere</div>
+      <div class="mood-banner-value" id="moodBannerValue">Neutral</div>
+    </div>
+    <div class="mood-desc" id="moodDesc">Write a memory to reveal your mood palette…</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     ADD MEMORY SECTION
+════════════════════════════════════════════════ -->
+<section class="add-section" id="add">
+  <div class="section-header">
+    <div class="section-eyebrow">◈ Capture It</div>
+    <h2 class="section-title">Add a Memory</h2>
+    <p class="section-sub">Every detail matters. Your future self will thank you.</p>
+  </div>
+
+  <div class="form-glass">
+    <!-- Title -->
+    <div class="form-group">
+      <label class="form-label">Memory Title</label>
+      <input type="text" id="memTitle" class="form-input"
+             placeholder="What do you want to remember this as?">
+    </div>
+
+    <!-- Date -->
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input type="date" id="memDate" class="form-input">
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label class="form-label">Your Story</label>
+      <textarea id="memDesc" class="form-textarea" rows="5"
+                placeholder="Describe this memory in vivid detail… (mood is auto-detected from your words)"></textarea>
+      <!-- Live mood preview -->
+      <div class="mood-preview" id="moodPreview">
+        <span class="mood-preview-dot"></span>
+        <span id="moodPreviewLabel">Start writing to detect mood…</span>
+      </div>
+    </div>
+
+    <!-- Image upload -->
+    <div class="form-group">
+      <label class="form-label">Attach a Photo (optional)</label>
+      <div class="image-drop-zone" id="dropZone">
+        <div class="drop-icon">⊕</div>
+        <div class="drop-text">Drag & drop or click to upload</div>
+        <div class="drop-hint">PNG, JPG, GIF — max 5MB</div>
+        <input type="file" id="memImage" accept="image/*" hidden>
+      </div>
+      <div class="image-preview-wrap" id="imagePreviewWrap" style="display:none">
+        <img id="imagePreview" class="image-preview-img" alt="preview">
+        <button class="image-remove-btn" id="imageRemoveBtn">✕ Remove</button>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button class="btn-submit" id="submitBtn">
+      <span id="submitBtnText">◈ Crystallize This Memory</span>
+      <div class="btn-loader" id="btnLoader" style="display:none"></div>
+    </button>
+
+    <!-- Feedback -->
+    <div class="form-feedback" id="formFeedback"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TIMELINE SECTION
+════════════════════════════════════════════════ -->
+<section class="timeline-section" id="timeline">
+  <div class="section-header">
+    <div class="section-eyebrow">◈ The Journey</div>
+    <h2 class="section-title">Memory Timeline</h2>
+    <p class="section-sub">Your life, rendered as a river of moments.</p>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-mood="all">All</button>
+    <button class="filter-btn" data-mood="happy">😊 Happy</button>
+    <button class="filter-btn" data-mood="sad">😢 Sad</button>
+    <button class="filter-btn" data-mood="excited">⚡ Excited</button>
+    <button class="filter-btn" data-mood="peaceful">🌊 Peaceful</button>
+    <button class="filter-btn" data-mood="nostalgic">🌙 Nostalgic</button>
+    <button class="filter-btn" data-mood="angry">🔥 Angry</button>
+    <button class="filter-btn" data-mood="neutral">○ Neutral</button>
+  </div>
+
+  <!-- Timeline container -->
+  <div class="timeline" id="timelineContainer">
+    <!-- Populated by JavaScript -->
+    <div class="timeline-empty" id="timelineEmpty">
+      <div class="empty-icon">◈</div>
+      <div class="empty-title">No memories yet.</div>
+      <div class="empty-sub">Add your first memory above — it'll appear here.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     MUSIC SECTION
+════════════════════════════════════════════════ -->
+<section class="music-section" id="music">
+  <div class="section-header">
+    <div class="section-eyebrow">◈ Soundscape</div>
+    <h2 class="section-title">Mood Music</h2>
+    <p class="section-sub">Songs curated to match the feeling of your memories.</p>
+  </div>
+
+  <div class="music-grid" id="musicGrid">
+    <!-- Populated by JS based on current mood -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-brand">◈ MemoryVerse</div>
+  <div class="footer-sub">Crafted with memory & intention. Every moment matters.</div>
+  <div class="footer-line"></div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════
+     MEMORY DETAIL MODAL
+════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     DELETE CONFIRM TOAST
+════════════════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

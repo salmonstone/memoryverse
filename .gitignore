@@ -1,0 +1,18 @@
+# Runtime data
+memories.json
+static/uploads/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# Claude internals
+.sixth/
+
+# OS
+.DS_Store
+Thumbs.db
